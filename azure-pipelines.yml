@@ -10,9 +10,12 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  group: CatNote
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  Auth0ClientId: $(CLIENTID)
+  Auth0ClientSecret: $(CLIENTSECRET)
 
 steps:
 - task: NuGetToolInstaller@1
@@ -32,6 +35,25 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: UseDotNet@2
+  displayName: 'Set Auth0 Configuration'
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+
+- powershell: |
+    $auth0ClientId = "$(Auth0ClientId)"
+    $auth0ClientSecret = "$(Auth0ClientSecret)"
+    $auth0ConfigPath = "$(System.DefaultWorkingDirectory)\YourProjectFolder\appsettings.json"
+    
+    Write-Host "Updating Auth0 configuration in $auth0ConfigPath"
+    
+    (Get-Content $auth0ConfigPath -Raw) | ForEach-Object {
+    $_ -replace '"ClientId": ""', "\"ClientId\": \"$auth0ClientId\"" `
+    -replace '"ClientSecret": ""', "\"ClientSecret\": \"$auth0ClientSecret\""
+    } | Set-Content $auth0ConfigPath
+    displayName: 'Update Auth0 Configuration'
 
 - task: NuGetToolInstaller@1
   inputs:
