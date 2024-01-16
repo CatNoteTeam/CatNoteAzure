@@ -53,7 +53,7 @@ steps:
     $_ -replace '"ClientId": ""', "`"ClientId`": `"$auth0ClientId`"" `
     -replace '"ClientSecret": ""', "`"ClientSecret`": `"$auth0ClientSecret`""
     } | Set-Content $auth0ConfigPath
-    displayName: 'Update Auth0 Configuration'
+  displayName: 'Update Auth0 Configuration'
 
 - task: NuGetToolInstaller@1
   inputs:
