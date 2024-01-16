@@ -15,15 +15,6 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-- checkout: self
-  displayName: 'Checkout repository'
-
-- script: |
-    cd cat-note-client  # Assuming "cat-note-client" is your Node.js project directory
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-
 - task: AzureStaticWebApp@0
   inputs:
     app_location: 'cat-note-client'
