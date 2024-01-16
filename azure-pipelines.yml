@@ -15,8 +15,10 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
+   
 - task: AzureStaticWebApp@0
   inputs:
-    app_location: 'cat-note-client'
-    app_build_command: 'npm run build:production'
-    skip_api_build: true
+      app_location: 'cat-note-client'
+      app_build_command: 'npm run build:production'
+      skip_api_build: true
+      azure_static_web_apps_api_token: '$(deployment_token)'
