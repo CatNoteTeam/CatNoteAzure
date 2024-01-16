@@ -15,7 +15,11 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
+- checkout: self
+  displayName: 'Checkout repository'
+
 - script: |
+    cd cat-note-client  # Assuming "cat-note-client" is your Node.js project directory
     npm install
     npm run build
   displayName: 'npm install and build'
@@ -25,4 +29,3 @@ steps:
     app_location: 'cat-note-client'
     app_build_command: 'npm run build:production'
     skip_api_build: true
-
