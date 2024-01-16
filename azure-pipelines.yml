@@ -15,14 +15,13 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-   
+- powershell: |
+    Get-ChildItem -Path '/working_dir' -Recurse
+  displayName: 'List Contents of /working_dir'
+
 - task: AzureStaticWebApp@0
   inputs:
       app_location: 'cat-note-client'
       app_build_command: 'npm run build:production'
       skip_api_build: true
       azure_static_web_apps_api_token: '$(DEPLOYMENT_TOKEN)'
-
-- powershell: |
-    Get-ChildItem -Path '/working_dir' -Recurse
-  displayName: 'List Contents of /working_dir'
