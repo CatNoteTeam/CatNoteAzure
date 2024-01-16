@@ -16,8 +16,8 @@ steps:
   displayName: 'Install Node.js'
 
 - powershell: |
-    Get-ChildItem -Path '/working_dir' -Recurse
-  displayName: 'List Contents of /working_dir'
+    Get-ChildItem -Path '$(System.DefaultWorkingDirectory)' -Recurse
+  displayName: 'List Contents of Project Directory'
 
 - task: AzureStaticWebApp@0
   inputs:
