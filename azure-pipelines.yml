@@ -45,7 +45,7 @@ steps:
 - powershell: |
     $auth0ClientId = "$(Auth0ClientId)"
     $auth0ClientSecret = "$(Auth0ClientSecret)"
-    $auth0ConfigPath = "$(System.DefaultWorkingDirectory)\CatNoteAzure\appsettings.json"
+    $auth0ConfigPath = "$(System.DefaultWorkingDirectory)\CatNoteAzure\CatNote.API\appsettings.json"
     
     Write-Host "Updating Auth0 configuration in $auth0ConfigPath"
     
