@@ -43,17 +43,8 @@ steps:
     version: '8.x'
 
 - powershell: |
-    $auth0ClientId = "$(Auth0ClientId)"
-    $auth0ClientSecret = "$(Auth0ClientSecret)"
-    $auth0ConfigPath = "$(System.DefaultWorkingDirectory)\CatNoteAzure\CatNote.API\appsettings.json"
-    
-    Write-Host "Updating Auth0 configuration in $auth0ConfigPath"
-    
-    (Get-Content $auth0ConfigPath -Raw) | ForEach-Object {
-    $_ -replace '"ClientId": ""', "`"ClientId`": `"$auth0ClientId`"" `
-    -replace '"ClientSecret": ""', "`"ClientSecret`": `"$auth0ClientSecret`""
-    } | Set-Content $auth0ConfigPath
-    displayName: 'Update Auth0 Configuration'
+    Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\CatNoteAzure" -Recurse
+  displayName: 'List Contents of CatNoteAzure Directory'
 
 - task: NuGetToolInstaller@1
   inputs:
