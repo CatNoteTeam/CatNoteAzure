@@ -43,7 +43,7 @@ steps:
     version: '8.x'
 
 - powershell: |
-    Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\CatNoteAzure" -Recurse
+    Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Recurse
   displayName: 'List Contents of CatNoteAzure Directory'
 
 - task: NuGetToolInstaller@1
