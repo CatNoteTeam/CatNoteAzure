@@ -50,8 +50,8 @@ steps:
     Write-Host "Updating Auth0 configuration in $auth0ConfigPath"
     
     (Get-Content $auth0ConfigPath -Raw) | ForEach-Object {
-    $_ -replace '"ClientId": ""', "\"ClientId\": \"$auth0ClientId\"" `
-    -replace '"ClientSecret": ""', "\"ClientSecret\": \"$auth0ClientSecret\""
+    $_ -replace '"ClientId": ""', "`"ClientId`": `"$auth0ClientId`"" `
+    -replace '"ClientSecret": ""', "`"ClientSecret`": `"$auth0ClientSecret`""
     } | Set-Content $auth0ConfigPath
     displayName: 'Update Auth0 Configuration'
 
