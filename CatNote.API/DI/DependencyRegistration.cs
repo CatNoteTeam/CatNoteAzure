@@ -19,7 +19,7 @@ public static class DependencyRegistration
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000", "https://proud-flower-0c97f3910.4.azurestaticapps.net/")
+                        builder.WithOrigins("http://localhost:3000", "https://proud-flower-0c97f3910.4.azurestaticapps.net")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
