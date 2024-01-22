@@ -1,0 +1,94 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  group: CatNote
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  Auth0ClientId: $(CLIENTID)
+  Auth0ClientSecret: $(CLIENTSECRET)
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: UseDotNet@2
+  displayName: 'Set Auth0 Configuration'
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+
+- powershell: |
+    $auth0ClientId = "$(Auth0ClientId)"
+    $auth0ClientSecret = "$(Auth0ClientSecret)"
+    $auth0ConfigPath = "$(System.DefaultWorkingDirectory)\CatNote.API\appsettings.json"
+    
+    Write-Host "Updating Auth0 configuration in $auth0ConfigPath"
+    
+    (Get-Content $auth0ConfigPath -Raw) | ForEach-Object {
+    $_ -replace '"ClientId": ""', "`"ClientId`": `"$auth0ClientId`"" `
+    -replace '"ClientSecret": ""', "`"ClientSecret`": `"$auth0ClientSecret`""
+    } | Set-Content $auth0ConfigPath
+  displayName: 'Update Auth0 Configuration'
+
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: 
+    checkLatest: true
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+    
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: 
+    checkLatest: true
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**\*.csproj'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+    MaxArtifactSize: 8068055 

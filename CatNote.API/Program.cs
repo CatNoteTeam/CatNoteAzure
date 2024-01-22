@@ -2,7 +2,9 @@
 using CatNote.API.DI;
 using CatNote.API.Middlewares;
 using CatNote.BLL.DI;
+using CatNote.DAL;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace CatNote.API;
 
@@ -18,7 +20,18 @@ public class Program
 
         builder.Services.AddFluentValidationAutoValidation();
 
-        var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+        var connection = builder.Environment.IsDevelopment()
+            ? builder.Configuration.GetConnectionString("DefaultConnection")
+            : "Data Source=:memory:";
+
+        if (!builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("InMemoryDataBase");
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            });
+        }
 
         builder.Services.AddBusinessServices(connection);
 
